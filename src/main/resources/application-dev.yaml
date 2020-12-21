@@ -1,0 +1,12 @@
+logging:
+  level:
+    br:
+      com:
+        catsanddogs: DEBUG
+  pattern:
+    console: '%d{"yyyy/MM/dd HH:mm:ss,SSS"} [%-6p] [%t] %M\(%F:%L\) - %X{correlationId} %msg%n'
+
+api:
+  service:
+    cats: https://aws.random.cat/meow
+    dogs: https://dog.ceo/api/breeds/image/random
