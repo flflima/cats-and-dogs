@@ -2,11 +2,11 @@ logging:
   level:
     br:
       com:
-        catsanddogs: DEBUG
+        catsanddogs: ${LOG_LEVEL}
   pattern:
     console: '%d{"yyyy/MM/dd HH:mm:ss,SSS"} [%-6p] [%t] %M\(%F:%L\) - %X{correlationId} %msg%n'
 
 api:
   service:
-    cats: https://aws.random.cat/meow
-    dogs: https://dog.ceo/api/breeds/image/random
+    cats: ${API_SERVICES_CATS}
+    dogs: ${API_SERVICES_DOGS}
