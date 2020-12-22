@@ -20,11 +20,20 @@ public class CatAndDogServiceImpl implements CatAndDogService {
     private final DogService dogService;
 
     @Override
-    public Mono<String> getCatAndDog() {
+    public Mono<String> getCatAndDogAsync() {
         log.info("Preparing to search for Cats and Dogs images...");
         final var cat = this.catService.getCat().subscribeOn(Schedulers.parallel());
         final var dog = this.dogService.getDog().subscribeOn(Schedulers.parallel());
 
         return Mono.zip(cat, dog, VelocityUtil.loadCatAndDogTemplate());
+    }
+
+    @Override
+    public String getCatAndDogSync() {
+        log.info("Sync: preparing to search for Cats and Dogs images...");
+        final var cat = this.catService.getCatSync();
+        final var dog = this.dogService.getDogSync();
+        
+        return VelocityUtil.loadCatAndDogTemplate().apply(cat.get(), dog.get());
     }
 }

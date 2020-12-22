@@ -4,5 +4,7 @@ import reactor.core.publisher.Mono;
 
 public interface CatAndDogService {
 
-    Mono<String> getCatAndDog();
+    Mono<String> getCatAndDogAsync();
+
+    String getCatAndDogSync();
 }

@@ -4,12 +4,9 @@ import br.com.catsanddogs.catsanddogs.application.enums.Status;
 import br.com.catsanddogs.catsanddogs.application.response.CatResponse;
 import br.com.catsanddogs.catsanddogs.domain.service.CatAndDogService;
 import br.com.catsanddogs.catsanddogs.domain.service.CatService;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +46,17 @@ public class CatsAndDogsController {
     Mono<String> getCatAndDog() {
         MDC.put("correlationId", UUID.randomUUID().toString());
         try {
-            return this.catAndDogService.getCatAndDog();
+            return this.catAndDogService.getCatAndDogAsync();
+        } finally {
+            MDC.clear();
+        }
+    }
+
+    @RequestMapping(value = "sync", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    String getCatAndDogSync() {
+        MDC.put("correlationId", UUID.randomUUID().toString());
+        try {
+            return this.catAndDogService.getCatAndDogSync();
         } finally {
             MDC.clear();
         }

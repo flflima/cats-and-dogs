@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -46,5 +47,30 @@ public class DogApiService implements DogService {
         }
 
         return Mono.empty();
+    }
+
+    @Override
+    public Optional<Dog> getDogSync() {
+        final var request = new Request.Builder()
+                .url(this.apiProperties.getDogs())
+                .get()
+                .build();
+
+        log.info("Searching a Dog Image...");
+        try (final var response = this.client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+
+            log.info("Dog Image successfully found!");
+            final var responseAsString = response.body() != null ? response.body().string() : "";
+            log.debug(responseAsString);
+            return Optional.of(this.objectMapper.readValue(responseAsString, Dog.class));
+        } catch (IOException e) {
+            log.error("Error: ", e);
+            e.printStackTrace();
+        }
+
+        return Optional.empty();
     }
 }
