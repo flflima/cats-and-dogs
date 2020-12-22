@@ -1,1 +1,1 @@
-web: java -jar -Dserver.port=$PORT build/libs/cats-and-dogs*.jar
+web: java -jar -Dspring.profile.active=prod -Dserver.port=$PORT build/libs/cats-and-dogs*.jar
