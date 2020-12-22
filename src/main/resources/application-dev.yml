@@ -6,8 +6,8 @@ logging:
   pattern:
     console: '%d{"yyyy/MM/dd HH:mm:ss,SSS"} [%-6p] [%t] %M\(%F:%L\) - %X{correlationId} %msg%n'
 
-#enable:
-#  endpoint: true
+enable:
+  endpoint: true
 
 api:
   service:
