@@ -1,6 +1,7 @@
 package br.com.catsanddogs.catsanddogs.application.controller;
 
 import br.com.catsanddogs.catsanddogs.application.enums.Status;
+import br.com.catsanddogs.catsanddogs.application.response.CatAndDogResponse;
 import br.com.catsanddogs.catsanddogs.application.response.CatResponse;
 import br.com.catsanddogs.catsanddogs.domain.service.CatAndDogService;
 import br.com.catsanddogs.catsanddogs.domain.service.CatService;
@@ -31,19 +32,8 @@ public class CatsAndDogsController {
     @Value("${spring.profiles.active:}")
     private String activeProfile;
 
-    @RequestMapping(value = "cats", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<Mono<CatResponse>> getCat() {
-        if (activeProfile.equalsIgnoreCase("dev")) {
-            Mono<CatResponse> cat = this.catService.getCat()
-                    .subscribeOn(Schedulers.parallel())
-                    .map(c -> new CatResponse(Status.SUCCESS, c));
-            return new ResponseEntity<>(cat, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
-    }
-
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-    Mono<String> getCatAndDog() {
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    Mono<CatAndDogResponse> getCatAndDog() {
         MDC.put("correlationId", UUID.randomUUID().toString());
         try {
             return this.catAndDogService.getCatAndDogAsync();
@@ -52,8 +42,8 @@ public class CatsAndDogsController {
         }
     }
 
-    @RequestMapping(value = "sync", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-    String getCatAndDogSync() {
+    @RequestMapping(value = "sync", method = RequestMethod.GET, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    CatAndDogResponse getCatAndDogSync() {
         MDC.put("correlationId", UUID.randomUUID().toString());
         try {
             return this.catAndDogService.getCatAndDogSync();

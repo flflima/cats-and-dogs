@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -31,18 +30,23 @@ public class CatRandomApiService implements CatService {
                 .get()
                 .build();
 
-        log.info("Searching a Cat Image...");
+        log.info("Async: searching a Cat Image...");
+
         try (final var response = this.client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                throw new IOException("Unexpected code " + response);
+                throw new Exception("Unexpected code " + response);
             }
 
             log.info("Cat Image successfully found!");
-            final var responseAsString = response.body() != null ? response.body().string() : "";
+
+            final var body = response.body();
+            final var responseAsString = body != null ? body.string() : "";
+
             log.debug(responseAsString);
+
             return Mono.just(this.objectMapper.readValue(responseAsString, Cat.class));
-        } catch (IOException e) {
-            log.error("Error: ", e);
+        } catch (Exception e) {
+            log.error("Error on searching a cat image: ", e);
             e.printStackTrace();
         }
 
@@ -56,19 +60,23 @@ public class CatRandomApiService implements CatService {
                 .get()
                 .build();
 
+        log.info("Sync: searching a Cat Image...");
 
-        log.info("Searching a Cat Image...");
         try (final var response = this.client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                throw new IOException("Unexpected code " + response);
+                throw new Exception("Unexpected code " + response);
             }
 
             log.info("Cat Image successfully found!");
-            final var responseAsString = response.body() != null ? response.body().string() : "";
+
+            final var body = response.body();
+            final var responseAsString = body != null ? body.string() : "";
+
             log.debug(responseAsString);
+
             return Optional.of(this.objectMapper.readValue(responseAsString, Cat.class));
-        } catch (IOException e) {
-            log.error("Error: ", e);
+        } catch (Exception e) {
+            log.error("Error on searching a cat image: ", e);
             e.printStackTrace();
         }
 

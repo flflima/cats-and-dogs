@@ -1,6 +1,8 @@
 plugins {
 	id 'org.springframework.boot' version '2.4.1'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id 'jacoco'
+	id "com.github.spotbugs" version "4.6.0"
 	id 'java'
 }
 
@@ -24,13 +26,76 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	implementation 'com.squareup.okhttp3:okhttp:4.9.0'
-	compile 'org.apache.velocity:velocity-engine-core:2.2'
-    implementation 'org.apache.velocity:velocity:1.7'
-    implementation 'org.apache.velocity:velocity-tools:2.0'
+
+//	compile 'org.apache.velocity:velocity-engine-core:2.2'
+//    implementation 'org.apache.velocity:velocity:1.7'
+//    implementation 'org.apache.velocity:velocity-tools:2.0'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
+	testImplementation 'org.assertj:assertj-core:3.11.1'
+}
+
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			limit {
+				enabled = true
+				counter = 'BRANCH'
+				value = 'COVEREDRATIO'
+				minimum = 0.75
+			}
+		}
+	}
 }
 
 test {
 	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+	dependsOn test
+	finalizedBy jacocoTestCoverageVerification
+	afterEvaluate {
+		excludedClassFilesForReport(classDirectories)
+	}
+}
+
+jacocoTestCoverageVerification {
+	dependsOn jacocoTestReport
+}
+
+jacocoTestCoverageVerification {
+	afterEvaluate {
+		excludedClassFilesForReport(classDirectories)
+	}
+}
+
+private excludedClassFilesForReport(classDirectories) {
+	classDirectories.setFrom(files(classDirectories.files.collect {
+		fileTree(dir: it,
+				exclude: [
+						'br/com/catsanddogs/catsanddogs/domain/model/**',
+						'br/com/catsanddogs/catsanddogs/application/response/**',
+						'br/com/catsanddogs/catsanddogs/application/properties/**',
+						'br/com/catsanddogs/catsanddogs/application/enums/**',
+						'br/com/catsanddogs/catsanddogs/application/config/**'
+				]
+		)
+	}))
+}
+
+spotbugs {
+	ignoreFailures = false
+}
+
+spotbugsMain {
+	reports {
+		html {
+			enabled = true
+			destination = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+			stylesheet = 'fancy-hist.xsl'
+		}
+	}
 }

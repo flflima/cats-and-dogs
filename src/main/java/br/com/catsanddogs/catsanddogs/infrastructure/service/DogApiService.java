@@ -38,7 +38,8 @@ public class DogApiService implements DogService {
             }
 
             log.info("Dog Image successfully found!");
-            final var responseAsString = response.body() != null ? response.body().string() : "";
+            final var body = response.body();
+            final var responseAsString = body != null ? body.string() : "";
             log.debug(responseAsString);
             return Mono.just(this.objectMapper.readValue(responseAsString, Dog.class));
         } catch (IOException e) {
@@ -63,7 +64,8 @@ public class DogApiService implements DogService {
             }
 
             log.info("Dog Image successfully found!");
-            final var responseAsString = response.body() != null ? response.body().string() : "";
+            final var body = response.body();
+            final var responseAsString = body != null ? body.string() : "";
             log.debug(responseAsString);
             return Optional.of(this.objectMapper.readValue(responseAsString, Dog.class));
         } catch (IOException e) {
