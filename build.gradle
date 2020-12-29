@@ -88,6 +88,7 @@ private excludedClassFilesForReport(classDirectories) {
 
 spotbugs {
 	ignoreFailures = false
+	spotbugsTest.enabled = false
 }
 
 spotbugsMain {
