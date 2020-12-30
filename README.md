@@ -14,4 +14,6 @@ The main goal of this project was to try a little of [Spring WebFlux](https://do
     
 ## Try it:
 
-https://cats-n-dogs-app.herokuapp.com/cats-and-dogs
+```console
+curl https://cats-n-dogs-service.herokuapp.com/cats-and-dogs   
+```
